@@ -259,7 +259,7 @@ void setup(){
   ledcAttach(ENB,1000,8);
 
   WiFi.mode(WIFI_AP);
-  WiFi.softAP("AMES-Roborace_Bot","Cecilia1");
+  WiFi.softAP("CyberClaw","Cecilia1");
 
   server.on("/",[](){
     String p=html;
