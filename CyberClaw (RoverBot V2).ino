@@ -43,97 +43,100 @@ const char* html=R"rawliteral(
       body{
         margin:0;
         background:#111;
-        color:#fff;
+        color:white;
         font-family:Arial, sans-serif;
+
         display:flex;
         flex-direction:column;
         justify-content:center;
         align-items:center;
+        gap: 100px;
         width:100vw;
         height:100vh;
-        overflow:hidden;
       }
 
-      .row{
-          display:flex;
-          justify-content:center;
-          align-items:flex-end;
-          gap:55px;
-      }
+    .control{
+        display:flex;
+        flex-direction:row;
+        align-items:center;
+        gap:15px;
 
-      .s{
-          -webkit-appearance:none;
-          appearance:none;
+        width:95vw;
+        margin:12px 0;
+    }
 
-          width:200px;
-          height:55px;
+    .label{
+        width:55px;
+        height:55px;
 
-          background:transparent;
-          transform:rotate(-90deg);
-      }
+        display:flex;
+        justify-content:center;
+        align-items:center;
 
-      .s::-webkit-slider-runnable-track{
-          height:55px;
-          background:#444;
-          border-radius:10px;
-      }
+        font-weight:bold;
+        color:white;
 
-      .s::-webkit-slider-thumb{
-          -webkit-appearance:none;
-          width:50px;
-          height:50px;
-          border-radius:50%;
-          background:#00ffcc;
-          border:3px solid #00ffaa;
-          margin-top:2px;
-      }
+        writing-mode:vertical-rl;
+        text-orientation:mixed;
+    }
 
-      #v{
+    .s{
+        -webkit-appearance:none;
+        appearance:none;
+
+        width:100%;
+        height:55px;
+
+        background:transparent;
+        margin:0;
+    }
+
+    .s::-webkit-slider-runnable-track{
+        height:55px;
+        background:#4a4a4a;
+        border-radius:12px;
+    }
+
+    .s::-webkit-slider-thumb{
+        -webkit-appearance:none;
+
+        width:55px;
+        height:55px;
+        border-radius:50%;
+
+        background:#10e8c7;
+        border:3px solid #00ffaa;
+
+        margin-top:0;
+    }
+
+    #v{
+        margin-top:20px;
         font-size:20px;
-        margin-top:15px;
-        text-align:center;
-      }
-
-      .control{
-          width:60px;
-          display:flex;
-          flex-direction:column;
-          align-items:center;
-      }
-
-      .label{
-          margin-top:95px;
-          color:white;
-          font-weight:bold;
-          font-size:14px;
-      }
+    }
 
     </style>
   </head>
   <body>
 
-  <div class = "row">
-
   <div class="control">
-  <input type='range' min='-255' max='255' value='0' id='L' class='s'>
-  <div class="label">LEFT</div>
+      <div class="label">LEFT</div>
+      <input type="range" min="-255" max="255" value="0" id="L" class="s">
   </div>
 
   <div class="control">
-  <input type='range' min='90' max='145' value='90' id='J1' class='s'>
-  <div class="label">ARM</div>
+      <div class="label">ARM</div>
+      <input type="range" min="0" max="180" value="90" id="J1" class="s">
   </div>
 
   <div class="control">
-  <input type='range' min='45' max='145' value='90' id='G' class='s'>
-  <div class="label">GRIPPER</div>
+      <div class="label">GRIPPER</div>
+      <input type="range" min="0" max="180" value="90" id="G" class="s">
   </div>
 
   <div class="control">
-  <input type='range' min='-255' max='255' value='0' id='R' class='s'>
-  <div class="label">RIGHT</div>
-  </div>
-
+      <div class="label">RIGHT</div>
+      <input type="range" min="-255" max="255" value="0" id="R" class="s">
   </div>
 
   <div id='v'>L:0 | R:0 | G:90 | J1:0</div>
@@ -206,7 +209,7 @@ void wsEvent(uint8_t n, WStype_t t, uint8_t *p, size_t len){
 
   targetL = s.substring(0, c1).toInt();
   targetR = s.substring(c1 + 1, c2).toInt();
-  grip = constrain(s.substring(c2 + 1, c3).toInt(), 90, 145);
+  grip = constrain(s.substring(c2 + 1, c3).toInt(), 60, 145);
   joint1 = constrain(s.substring(c3 + 1).toInt(), 45, 145);
 
   Serial.printf("L:%d R:%d G:%d J1:%d\n", targetL, targetR, grip, joint1);
@@ -215,9 +218,7 @@ void wsEvent(uint8_t n, WStype_t t, uint8_t *p, size_t len){
 void setMotor(int spd,int a,int b,int en){
   spd = constrain(spd,-255,255);
   int pwm = abs(spd);
-  if(pwm < 20){
-    pwm = 0;
-  }
+
   if(spd > 0){
     digitalWrite(a,LOW);
     digitalWrite(b,HIGH);
@@ -231,7 +232,7 @@ void setMotor(int spd,int a,int b,int en){
   else{
     digitalWrite(a,LOW);
     digitalWrite(b,LOW);
-    ledcWrite(en,0);
+    ledcWrite(en,0);  
   }
 }
 
@@ -259,7 +260,7 @@ void setup(){
   ledcAttach(ENB,1000,8);
 
   WiFi.mode(WIFI_AP);
-  WiFi.softAP("CyberClaw","Cecilia1");
+  WiFi.softAP("CyberClaw","Mahiru1");
 
   server.on("/",[](){
     String p=html;
